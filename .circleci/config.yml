@@ -184,7 +184,8 @@ jobs:
 
   run-migrations:
     docker:
-      - image: circleci/node:13.8.0
+      #- image: circleci/node:13.8.0
+      - image: sleavely/node-awscli:14.x
     steps:
       - checkout
       - run:
@@ -194,7 +195,7 @@ jobs:
             npm install
             npm audit fix --audit-level=critical --force
             npm run migrations > migrations_dump.txt
-            npm audit fix --audit-level=critical --force
+            
       - run:
           name: Send migration results to memstash
           command: |
