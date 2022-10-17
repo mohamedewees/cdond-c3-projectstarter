@@ -180,7 +180,155 @@ jobs:
             cat ~/project/.circleci/ansible/inventory.txt
             export ANSIBLE_HOST_KEY_CHECKING=False
             ansible-playbook -i ~/project/.circleci/ansible/inventory.txt ~/project/.circleci/ansible/configure-server.yml
-      # Here's where you will add some code to rollback on failure                       
+      # Here's where you will add some code to rollback on failure  
+
+  run-migrations:
+    docker:
+      - image: circleci/node:13.8.0
+    steps:
+      - checkout
+      - run:
+          name: Run migrations
+          command: |
+            cd backend
+            cat .env
+            npm i
+            npm run build
+            npm run migrations
+      - run:
+          name: Send migration results to memstash
+          command: |
+            echo "has been done successfully" > ./migration_status.txt
+            pwd && ls -al
+            if grep -q "has been done successfully" ./migration_status.txt 
+            then 
+              echo "has been done successfully"
+              curl -H "Content-Type: text/plain" -H "token: ecdfc255-81e1-4056-9efa-2d7fa10812e1" --request PUT --data "1" https://api.memstash.io/values/migrations-${CIRCLE_WORKFLOW_ID:0:7}
+            else
+              echo "has failed"
+              curl -H "Content-Type: text/plain" -H "token: ecdfc255-81e1-4056-9efa-2d7fa10812e1" --request PUT --data "0" https://api.memstash.io/values/migrations-${CIRCLE_WORKFLOW_ID:0:7}
+            fi
+     # Here's where you will add some code to rollback on failure      
+
+  deploy-frontend:
+    docker:
+      - image: sleavely/node-awscli:14.x
+    steps:
+      - checkout
+      - attach_workspace:
+          at: /root
+      - run:
+          name: Install dependencies
+          command: |
+            apk add curl
+            apk add --upgrade bash
+            apk add --update ansible
+            apk add openssh-client
+            pip3 install awscli
+      - run:
+          name: Get backend url
+          command: |
+            export BACKEND_IP=$(aws ec2 describe-instances \
+                --filters "Name=tag:Name,Values=backend-prod-${CIRCLE_WORKFLOW_ID:0:7}" \
+                --query 'Reservations[*].Instances[*].PublicIpAddress' \
+                --output text)
+            export API_URL="http://${BACKEND_IP}:3030"
+            echo "API_URL = ${API_URL}"
+            echo API_URL="http://${BACKEND_IP}:3030" >> frontend/.env
+            cat frontend/.env
+      - run:
+          name: Deploy frontend objects
+          working_directory: ./frontend
+          command: |
+            cd frontend
+            npm install
+            npm run build
+            tar -czvf artifact-"${CIRCLE_WORKFLOW_ID:0:7}".tar.gz dist
+            aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
+      # Here's where you will add some code to rollback on failure      
+                    
+  deploy-backend:
+    docker:
+      - image: python:3.7-alpine3.11
+        environment:
+            NODE_ENV: "local"
+            VERSION: "1"
+            ENVIRONMENT: "production"
+            TYPEORM_CONNECTION: $TYPEORM_CONNECTION
+            TYPEORM_HOST: $TYPEORM_HOST
+            TYPEORM_USERNAME: $TYPEORM_USERNAME
+            TYPEORM_PASSWORD: $TYPEORM_PASSWORD
+            TYPEORM_DATABASE: $TYPEORM_DATABASE
+            TYPEORM_PORT: $TYPEORM_PORT
+            TYPEORM_ENTITIES: $TYPEORM_ENTITIES
+    steps:
+      - checkout
+      - add_ssh_keys:
+          fingerprints: ["cf:80:d7:d5:b7:f7:35:ea:61:15:88:4a:4c:28:8c:71"]
+      - attach_workspace:
+          at: /root
+      - run:
+          name: Install dependencies
+          command: |
+            apk add --update ansible rsync 
+            apk add curl
+            pip3 install awscli
+      - run:
+          name: Deploy backend
+          command: |
+            ls /root
+            ls /root/project/backend/
+            cat ~/project/.circleci/ansible/inventory.txt
+            ansible-playbook -i ~/project/.circleci/ansible/inventory.txt ~/project/.circleci/ansible/deploy-backend.yml
+      # Here's where you will add some code to rollback on failure  
+
+  smoke-test:
+    docker:
+      - image: python:3.7-alpine3.11 
+    steps:
+      - checkout
+      - attach_workspace:
+          at: /root
+      - run:
+          name: Install dependencies
+          command: |
+            apk add --update curl
+            pip install awscli
+      - run:
+          name: Get backend url
+          command: |
+            export BACKEND_IP=$(aws ec2 describe-instances \
+                --filters "Name=tag:Name,Values=backend-prod-${CIRCLE_WORKFLOW_ID:0:7}" \
+                --query 'Reservations[*].Instances[*].PublicIpAddress' \
+                --output text)
+            export API_URL="http://${BACKEND_IP}:3030"
+            echo "API_URL = ${API_URL}"
+            echo API_URL="http://${BACKEND_IP}:3030" >> frontend/.env
+            cat frontend/.env
+      - run:
+          name: Backend smoke test.
+          command: |
+            export API_URL="http://${BACKEND_IP}:3030"
+            echo "${API_URL}"
+            if curl "${API_URL}/api/status" | grep "ok"
+            then
+                return 0
+            else
+                return 1
+            fi
+      - run:
+          name: Frontend smoke test.
+          command: |
+            URL="http://udapeople-${CIRCLE_WORKFLOW_ID:0:7}.s3-website-us-east-1.amazonaws.com/#/employees"            
+            echo ${URL} 
+            if curl -s ${URL} | grep "Welcome"
+            then
+                # Change this to 0 after the job fails
+              return 1
+            else
+              return 1
+            fi
+      # Here's where you will add some code to rollback on failure                     
 
 workflows:
   default:
@@ -208,3 +356,16 @@ workflows:
       - configure-infrastructure:
           requires: 
             - deploy-infrastructure
+      - run-migrations:
+          requires: 
+          - configure-infrastructure
+      - deploy-backend:
+          requires:
+            - run-migrations
+      - deploy-frontend:
+          requires:
+            - run-migrations
+      - smoke-test:
+          requires: 
+            - deploy-backend
+            - deploy-frontend
