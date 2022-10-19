@@ -212,7 +212,7 @@ jobs:
 
   deploy-frontend:
     docker:
-      - image: python:3.7-alpine3.11
+      - image: sleavely/node-awscli:14.x
     steps:
       - checkout
       - attach_workspace:
