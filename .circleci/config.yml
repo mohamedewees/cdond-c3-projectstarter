@@ -220,11 +220,12 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            apk add curl
-            apk add --upgrade bash
-            apk add --update ansible
-            apk add openssh-client
-            pip3 install awscli
+            yum -y install tar gzip awscli curl
+      #       apk add curl
+      #       apk add --upgrade bash
+      #       apk add --update ansible
+      #       apk add openssh-client
+      #       pip3 install awscli
       - run:
           name: Get backend url
           command: |
