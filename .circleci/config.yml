@@ -217,13 +217,7 @@ jobs:
       - checkout
       - attach_workspace:
           at: ~/
-      - run:
-          name: Install dependencies
-          command: |
-            yum -y install tar
-            yum -y install gzip
-            yum -y install awscli
-            yum -y install curl
+      - run: yum -y install tar gzip awscli curl
       #       apk add curl
       #       apk add --upgrade bash
       #       apk add --update ansible
