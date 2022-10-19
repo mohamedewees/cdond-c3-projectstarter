@@ -216,7 +216,7 @@ jobs:
     steps:
       - checkout
       - attach_workspace:
-          at: /root
+          at: ~/
       - run:
           name: Install dependencies
           command: |
