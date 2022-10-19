@@ -220,9 +220,9 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            yum -y install tar 
-            yum -y install gzip 
-            yum -y install awscli 
+            yum -y install tar
+            yum -y install gzip
+            yum -y install awscli
             yum -y install curl
       #       apk add curl
       #       apk add --upgrade bash
@@ -337,29 +337,29 @@ jobs:
 workflows:
   default:
     jobs:
-      - build-frontend
-      - build-backend
-      - test-frontend:
-          requires:
-            - build-frontend
-      - test-backend:
-          requires:
-            - build-backend
-      - scan-backend:
-          requires:
-            - build-backend
-      - scan-frontend:
-          requires:
-            - build-frontend
-      - deploy-infrastructure:
-          requires:
-            - test-frontend
-            - test-backend
-            - scan-frontend
-            - scan-backend
-      - configure-infrastructure:
-          requires: 
-            - deploy-infrastructure
+      # - build-frontend
+      # - build-backend
+      # - test-frontend:
+      #     requires:
+      #       - build-frontend
+      # - test-backend:
+      #     requires:
+      #       - build-backend
+      # - scan-backend:
+      #     requires:
+      #       - build-backend
+      # - scan-frontend:
+      #     requires:
+      #       - build-frontend
+      # - deploy-infrastructure:
+      #     requires:
+      #       - test-frontend
+      #       - test-backend
+      #       - scan-frontend
+      #       - scan-backend
+      # - configure-infrastructure:
+      #     requires: 
+      #       - deploy-infrastructure
       - run-migrations:
           requires: 
           - configure-infrastructure
