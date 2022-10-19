@@ -300,9 +300,9 @@ jobs:
                 --query 'Reservations[*].Instances[*].PublicIpAddress' \
                 --output text)
             echo ${BACKEND_IP}
-            export API_URL="http://${BACKEND_IP}:3030"
+            export API_URL="http://${BACKEND_IP}:9100"
             echo "API_URL = ${API_URL}"
-            echo API_URL="http://${BACKEND_IP}:3030" >> frontend/.env
+            echo API_URL="http://${BACKEND_IP}:9100" >> frontend/.env
             cat frontend/.env
       - run:
           name: Backend smoke test.
@@ -312,9 +312,9 @@ jobs:
                 --query 'Reservations[*].Instances[*].PublicIpAddress' \
                 --output text)
               echo ${BACKEND_IP}
-              export API_URL="http://${BACKEND_IP}:3030"
+              export API_URL="http://${BACKEND_IP}:9100"
               echo "API_URL = ${API_URL}"
-              echo API_URL="http://${BACKEND_IP}:3030" >> frontend/.env
+              echo API_URL="http://${BACKEND_IP}:9100" >> frontend/.env
               cat frontend/.env
               if curl "${API_URL}/api/status" | grep "ok"
               then
