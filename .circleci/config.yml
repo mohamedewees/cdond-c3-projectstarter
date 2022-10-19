@@ -215,9 +215,9 @@ jobs:
       - image: amazon/aws-cli
     steps:
       - checkout
-      - attach_workspace:
-          at: ~/
-      - run: yum -y install tar gzip awscli curl
+      - run: yum -y install tar
+      # - attach_workspace:
+      #     at: ~/
       #       apk add curl
       #       apk add --upgrade bash
       #       apk add --update ansible
