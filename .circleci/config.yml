@@ -316,7 +316,7 @@ jobs:
               echo "API_URL = ${API_URL}"
               echo API_URL="http://${BACKEND_IP}:9100" >> frontend/.env
               cat frontend/.env
-              if curl "${API_URL}/api/status" | grep "ok"
+              if curl -I "${API_URL}/api/status" | grep "OK"
               then
                   return 0
               else
