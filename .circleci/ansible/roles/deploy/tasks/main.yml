@@ -24,13 +24,14 @@
 
   - name: "run server"
     become: true
-    command: |
-      npm install
+    shell: |
+      npm i
+      cd ./udapeople/dist
       pm2 stop default
       pm2 start npm -- start
       # pm2 start -f ./main.js
-    args:
-      chdir: ./udapeople/dist
+    # args:
+    #   chdir: ./udapeople/dist
     environment:
       ENVIRONMENT: production
       TYPEORM_CONNECTION: "{{ lookup('env', 'TYPEORM_CONNECTION') }}"
