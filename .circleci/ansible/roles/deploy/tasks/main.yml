@@ -28,13 +28,13 @@
       npm i
       cd ./udapeople
       npm install pm2 -g
-      cd ./udapeople/dist
+      # cd ./udapeople/dist
       # pm2 stop default
-      ls
-      pm2 start main.js
+      # ls
+      # pm2 start main.js
       # pm2 start -f ./main.js
-    # args:
-    #   chdir: ./udapeople/dist
+    args:
+      chdir: ./udapeople/dist
     environment:
       ENVIRONMENT: production
       TYPEORM_CONNECTION: "{{ lookup('env', 'TYPEORM_CONNECTION') }}"
