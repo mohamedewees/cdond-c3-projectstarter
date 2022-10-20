@@ -27,8 +27,10 @@
     shell: |
       npm i
       cd ./udapeople
-      pm2 stop default
-      pm2 start npm -- start
+      npm install pm2 -g
+      cd ./udapeople/dist
+      # pm2 stop default
+      pm2 start ./udapeople/dist/main.js
       # pm2 start -f ./main.js
     # args:
     #   chdir: ./udapeople/dist
