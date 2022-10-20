@@ -278,7 +278,7 @@ jobs:
                     
   deploy-backend:
     docker:
-      - image: python:3.7-alpine3.11
+      - image: circleci/node:13.8.0
         environment:
             NODE_ENV: "local"
             VERSION: "1"
@@ -296,12 +296,12 @@ jobs:
           fingerprints: ["cf:80:d7:d5:b7:f7:35:ea:61:15:88:4a:4c:28:8c:71"]
       - attach_workspace:
           at: /root
-      - run:
-          name: Install dependencies
-          command: |
-            apk add --update ansible rsync 
-            apk add curl
-            pip3 install awscli
+      # - run:
+      #     name: Install dependencies
+      #     command: |
+      #       apk add --update ansible rsync 
+      #       apk add curl
+      #       pip3 install awscli
       - run:
           name: Deploy backend
           command: |
