@@ -24,7 +24,7 @@
 
   - name: "run server"
     become: true
-    # shell: ls
+    shell: ls
     # shell: |
     #   npm i
     #   cd ./udapeople
@@ -34,16 +34,16 @@
       # ls
       # pm2 start main.js
       # pm2 start -f ./main.js
-    args:
-      chdir: ./udapeople/dist
-    environment:
-      ENVIRONMENT: production
-      TYPEORM_CONNECTION: "{{ lookup('env', 'TYPEORM_CONNECTION') }}"
-      TYPEORM_MIGRATIONS_DIR: "./migrations"
-      TYPEORM_MIGRATIONS: "./migrations/*.js"
-      TYPEORM_ENTITIES: "./modules/domain/**/*.entity.js"
-      TYPEORM_HOST: "{{ lookup('env', 'TYPEORM_HOST') }}"
-      TYPEORM_PORT: "{{ lookup('env', 'TYPEORM_PORT') }}"
-      TYPEORM_USERNAME: "{{ lookup('env', 'TYPEORM_USERNAME') }}"
-      TYPEORM_PASSWORD: "{{ lookup('env', 'TYPEORM_PASSWORD') }}"
-      TYPEORM_DATABASE: "{{ lookup('env', 'TYPEORM_DATABASE') }}"
+    # args:
+    #   chdir: ./udapeople/dist
+    # environment:
+    #   ENVIRONMENT: production
+    #   TYPEORM_CONNECTION: "{{ lookup('env', 'TYPEORM_CONNECTION') }}"
+    #   TYPEORM_MIGRATIONS_DIR: "./migrations"
+    #   TYPEORM_MIGRATIONS: "./migrations/*.js"
+    #   TYPEORM_ENTITIES: "./modules/domain/**/*.entity.js"
+    #   TYPEORM_HOST: "{{ lookup('env', 'TYPEORM_HOST') }}"
+    #   TYPEORM_PORT: "{{ lookup('env', 'TYPEORM_PORT') }}"
+    #   TYPEORM_USERNAME: "{{ lookup('env', 'TYPEORM_USERNAME') }}"
+    #   TYPEORM_PASSWORD: "{{ lookup('env', 'TYPEORM_PASSWORD') }}"
+    #   TYPEORM_DATABASE: "{{ lookup('env', 'TYPEORM_DATABASE') }}"
