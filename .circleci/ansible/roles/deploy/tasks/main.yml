@@ -24,10 +24,11 @@
 
   - name: "run server"
     become: true
-    shell: |
-      npm i
-      cd ./udapeople
-      npm install pm2 -g
+    command: pm2 start -f ./main.js
+    # shell: |
+    #   npm i
+    #   cd ./udapeople
+    #   npm install pm2 -g
       # cd ./udapeople/dist
       # pm2 stop default
       # ls
