@@ -26,7 +26,7 @@
     become: true
     shell: |
       npm i
-      cd ./udapeople/dist
+      cd ./udapeople
       pm2 stop default
       pm2 start npm -- start
       # pm2 start -f ./main.js

@@ -310,7 +310,7 @@ jobs:
             cd ~/project/backend
             npm i
             npm run build
-            ls ~/project/backend
+            ls ~/project/backend/dist
             cd dist
             cat ~/project/.circleci/ansible/inventory.txt
             ansible-playbook -i ~/project/.circleci/ansible/inventory.txt ~/project/.circleci/ansible/deploy-backend.yml
