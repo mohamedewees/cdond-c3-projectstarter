@@ -23,7 +23,8 @@
       recursive: true
 
   - name: "install apps"
-    shell: |
-      npm i
-      npm install pm2 -g
+    become: true
+    npm:
+      name: pm2
+      global: yes
     
